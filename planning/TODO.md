@@ -5,7 +5,7 @@ ER-301-STOLMINE TODO (generated — DO NOT EDIT)
 ledger, not this file. Status/verification are gate-enforced (`scripts/dev
 check`): a `done` item must have a real test or its named artifact.*
 
-**113 items** — 78 done, 33 todo, 2 archived. *Rendered 2026-08-06.*
+**115 items** — 80 done, 33 todo, 2 archived. *Rendered 2026-08-12.*
 
 ## Sequencer
 
@@ -94,6 +94,7 @@ check`): a `done` item must have a real test or its named artifact.*
 | ✓ | `emu-cmd-stable` | stable-frames primitive: resolve when N consecutive rendered frames are byte-identical | manual *(attested)* · 2026-07-09 |
 | ✓ | `emu-cmd-toggles` | Storage / mode toggle-switch commands | manual *(attested)* · 2026-07-09 |
 | ✓ | `emu-control-channel` | Line-oriented control channel read inside the emulator loop | manual *(attested)* · 2026-07-09 |
+| ✓ | `emu-darwin-crash-diag-enumerate-modules` | Darwin implementation of od::enumerateModules() — emu links and crash-diag module map works on macOS | manual *(attested)* · 2026-08-12 |
 | ✓ | `emu-harness-runner` | Automated test runner: discovers tests/emu/*.test, drives headless emu, diffs goldens, TAP output | manual *(attested)* · 2026-07-09 |
 | ✓ | `emu-headless-boot` | Emulator boots with --headless (no SDL window), firmware runs, clean exit | manual *(attested)* · 2026-07-09 |
 | ✓ | `emu-hermetic-sandbox` | Per-run sandbox: front/rear roots built from committed fixtures, no state bleed between runs | manual *(attested)* · 2026-07-09 |
@@ -122,6 +123,7 @@ check`): a `done` item must have a real test or its named artifact.*
 |---|---|---|---|
 |   | `docs-intro-video` | Produce a short intro video for the stolmine firmware | manual · 2026-07-09 |
 | ✓ | `docs-porting-guide-301` | 301-ecosystem porting guide for the ledger + BDG regime | manual *(attested)* · 2026-07-09 |
+| ✓ | `docs-repo-claude-md` | Repo-root CLAUDE.md: agent onboarding for the fork (build, versioning, tests, ledger flow, darwin env) | manual *(attested)* · 2026-08-12 |
 | ✓ | `ui-model-gesture-catalog` | Gesture vocabulary + M1-M6 slot-map operator reference (code-derived) | manual *(attested)* · 2026-07-10 |
 
 ## Infrastructure
