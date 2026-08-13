@@ -75,6 +75,19 @@ make emu GCC_VERSION=11 SWIG=$HOME/.local/bin/swig-er301
 - `~/.local/bin/swig-er301` shim strips `-no-old-metatable-bindings` for swig 4.5.
 - `arch/darwin/hal/dynload.cpp` maps `_Static_assert` → `static_assert` before mach headers because gcc (unlike clang) rejects the C keyword in C++; the macOS 26 SDK's `mach/message.h` depends on it.
 
+## am335x firmware builds from this Mac (Docker)
+
+The proven firmware host is a Linux x86 box (`HARDWARE_BUILD.md`); on this Mac, `docker/Dockerfile.am335x` **as shipped hangs** in the TI SDK install step: the SDK's post-install `cgt_pru_installer` dies under x86 emulation, and with stdin open the parent installer hangs forever at 0% CPU. The PRU compiler is not needed. Working recipe (verified 2026-08-12):
+
+1. In a kept `--platform linux/amd64` ubuntu:20.04 container, run the SDK installer with **stdin closed**: `./ti-sdk.bin --prefix /root/ti --mode unattended </dev/null` — **exit 1 is expected**; the five needed components (gcc-arm-none-eabi-4_9-2015q3, xdctools_3_32_01_22_core, bios_6_46_05_55, edma3_lld_2_12_05_29, pdk_am335x_1_0_8) extract fine. `docker commit` the container.
+2. Final builder image = the Dockerfile's apt-deps layer + `COPY --from=<committed-image> /root/ti /root/ti`.
+3. Build on the CONTAINER's filesystem, not the bind mount: tar-copy the repo (with `.git`, excluding `testing/`/`debug/`) to e.g. `/build`, then `git config --global --add safe.directory /build && make firmware ARCH=am335x SWIG=swig`, and `docker cp` the zip out.
+   - `SWIG=swig` because `scripts/am335x.mk` hardcodes a personal `~/.local/swig-4.2.1` path; the image's swig 4.0 still accepts `-no-old-metatable-bindings`.
+   - **The bind mount cannot be the build tree**: the PDK's 2017 `tiimage` binary fails with "Error opening/creating out image file!" creating output on a macOS virtiofs mount (verified: same command succeeds on container-local paths), so SBL/MLO imaging dies at the end of an otherwise-clean build. gcc/objcopy on the mount are fine — it's specifically tiimage.
+   - If building on a mount anyway, also `mkdir -p release/am335x` first (parallel-make race creating `install.lua`).
+
+Firmware and packages must come from the same build — never mix this fork's kernel with stock packages or vice versa (`HARDWARE_BUILD.md`).
+
 ## Agent bridge (emulator remote control)
 
 The running (windowed) emulator can be driven programmatically: `er301ctl ping|state|screenshot|tap|toggle|eval ...` (CLI in `~/.local/bin`, backed by the `agentbridge` package; source at `~/Developer/er301-agentbridge`; `make install` there stages the .pkg for auto-install on next emulator boot). Screenshots are PNGs readable by Claude. Only one emulator may run per machine (the bridge channel `/tmp/er301-bridge` is a singleton, and `~/.od` is shared). See the er301-bridge skill. For scripted/deterministic interaction prefer the headless harness above.
